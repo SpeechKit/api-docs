@@ -241,6 +241,8 @@
 <li><code class="prettyprint">PUBLISHER</code>: By using speechkit.io you&rsquo;re a publisher, no matter if you&rsquo;re a blogger or a media conglomerate. Your keys belong to what we call a publisher. Every publisher needs to have at least one news site.</li>
 <li><code class="prettyprint">NEWS_SITE</code>: A news site defines every site you run. This is to separate analytics and audio generation etc.</li>
 <li><code class="prettyprint">ARTICLES</code>: Every article belongs to a news site.</li>
+<li><code class="prettyprint">MEDIA</code>: Every article has one or more media. Each media object defines an audio version of the article it belongs to.</li>
+<li><code class="prettyprint">VOICE</code>: A voice as defined from speechkit can be used for synthesizing text to speech. Each media created has a voice attached to it.</li>
 </ol>
 
           <h1 id="authentication">Authentication</h1>
@@ -263,6 +265,33 @@ You can request a key from signing up on our website: <a href="https://speechkit
 <aside class="warning">
 Your <code>WRITE_API_KEY</code> should only be used from your backend or any other secure location, where no one else can view it.
 </aside>
+
+          <h1 id="voices">Voices</h1>
+
+<h2 id="get-all-voices">Get All Voices</h2>
+<pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://app.speechkit.io/api/v1/voices"</span>
+</code></pre>
+<blockquote>
+<p>Example response:</p>
+</blockquote>
+<pre class="highlight json tab-json"><code><span class="p">[</span><span class="w">
+  </span><span class="p">{</span><span class="w">
+    </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"language"</span><span class="p">:</span><span class="w"> </span><span class="s2">"en_AU"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Nicole"</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="p">{</span><span class="w">
+    </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"language"</span><span class="p">:</span><span class="w"> </span><span class="s2">"en_AU"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Russel"</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">]</span><span class="w">
+</span></code></pre>
+<p>This endpoint retrieves all voices available from speechkit</p>
+
+<h3 id="http-request">HTTP Request</h3>
+
+<p><code class="prettyprint">GET https://app.speechkit.io/api/v1/voices</code></p>
 
           <h1 id="news-sites">News sites</h1>
 
@@ -461,6 +490,133 @@ Your <code>WRITE_API_KEY</code> should only be used from your backend or any oth
 <td>article_id</td>
 <td>none</td>
 <td>The id of the article you want to request.</td>
+</tr>
+</tbody></table>
+
+<h2 id="create-an-article-with-audio">Create an article (with audio)</h2>
+<pre class="highlight shell tab-shell"><code>curl -X POST -d <span class="s1">'{
+    "external_id": 1,
+    "title": "The title of my article",
+    "published_at": "2017-02-03",
+    "author": "John Doe",
+    "summary": "My summary of the article",
+    "body": "This is the body of the article",
+    "media_attributes": [{
+        "role": "summary",
+        "voice_id": 1
+    }, {
+        "role": "body",
+        "voice_id": 1
+    }]
+}'</span> <span class="s2">"https://app.speechkit.io/api/v1/news_sites/{news_site_id}/articles"</span>
+  -H <span class="s2">"Authorization: Token=token {WRITE_API_KEY}"</span>
+</code></pre>
+<blockquote>
+<p>Example response:</p>
+</blockquote>
+<pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+  </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1141123123"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"url"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"The title of my article"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"author"</span><span class="p">:</span><span class="w"> </span><span class="s2">"John Doe"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"summary"</span><span class="p">:</span><span class="w"> </span><span class="s2">"My summary of the article"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"image"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"published_at"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2017-02-03T00:00:00.000Z"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"body"</span><span class="p">:</span><span class="w"> </span><span class="s2">"This is the body of the article"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"state"</span><span class="p">:</span><span class="w"> </span><span class="s2">"unprocessed"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"media"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+      </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">208</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"role"</span><span class="p">:</span><span class="w"> </span><span class="s2">"summary"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"content_type"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"url"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"created_at"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2017-04-26T11:48:29.069Z"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"state"</span><span class="p">:</span><span class="w"> </span><span class="s2">"unprocessed"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"voice"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"language"</span><span class="p">:</span><span class="w"> </span><span class="s2">"en_GB"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"en-GB_KateVoice"</span><span class="w">
+      </span><span class="p">}</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+      </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">209</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"role"</span><span class="p">:</span><span class="w"> </span><span class="s2">"body"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"content_type"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"url"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"created_at"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2017-04-26T11:48:29.071Z"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"state"</span><span class="p">:</span><span class="w"> </span><span class="s2">"unprocessed"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"voice"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"language"</span><span class="p">:</span><span class="w"> </span><span class="s2">"en_GB"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"en-GB_KateVoice"</span><span class="w">
+      </span><span class="p">}</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+<p>Create an article for your site. Every time you create an article we build the audio for you.</p>
+
+<aside class="notice">
+  Make sure the <code>state</code> of the article is &ldquo;processed&rdquo; to ensure that it has been generated, transcoded, etc.
+</aside>
+
+<h3 id="http-request">HTTP Request</h3>
+
+<p><code class="prettyprint">POST https://app.speechkit.io/api/v1/news_sites/{news_site_id}/articles</code></p>
+
+<h3 id="parameters">Parameters</h3>
+
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>external_id</td>
+<td>none</td>
+<td>The id you want to identify this article as. Needs to be unique</td>
+</tr>
+<tr>
+<td>title</td>
+<td>none</td>
+<td>The title of the article</td>
+</tr>
+<tr>
+<td>published_at</td>
+<td>none</td>
+<td>When this article was originally published</td>
+</tr>
+<tr>
+<td>author</td>
+<td>none</td>
+<td>The name of the author for this article</td>
+</tr>
+<tr>
+<td>summary</td>
+<td>none</td>
+<td>The summary of the article</td>
+</tr>
+<tr>
+<td>body</td>
+<td>none</td>
+<td>The complete body of the article</td>
+</tr>
+<tr>
+<td>media_attributes</td>
+<td>none</td>
+<td>This is an array containing all media files you want produced.</td>
+</tr>
+<tr>
+<td>media_attributes[:role]</td>
+<td>none</td>
+<td>The role specifies what part of the article you want synthesized</td>
+</tr>
+<tr>
+<td>media_attributes[:voice_id]</td>
+<td>none</td>
+<td>The voice id you want to use for this synthesis.</td>
 </tr>
 </tbody></table>
 

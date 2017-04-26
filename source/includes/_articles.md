@@ -113,3 +113,98 @@ news_site_id | none | The id of your site you want to fetch all articles for. Th
 article_id | none | The id of the article you want to request.
 
 
+
+
+
+## Create an article (with audio)
+
+```shell
+curl -X POST -d '{
+	"external_id": 1,
+	"title": "The title of my article",
+	"published_at": "2017-02-03",
+	"author": "John Doe",
+	"summary": "My summary of the article",
+	"body": "This is the body of the article",
+	"media_attributes": [{
+		"role": "summary",
+		"voice_id": 1
+	}, {
+		"role": "body",
+		"voice_id": 1
+	}]
+}' "https://app.speechkit.io/api/v1/news_sites/{news_site_id}/articles"
+  -H "Authorization: Token=token {WRITE_API_KEY}"
+```
+
+> Example response:
+
+```json
+{
+  "id": "1141123123",
+  "url": null,
+  "title": "The title of my article",
+  "author": "John Doe",
+  "summary": "My summary of the article",
+  "image": null,
+  "published_at": "2017-02-03T00:00:00.000Z",
+  "body": "This is the body of the article",
+  "state": "unprocessed",
+  "media": [
+    {
+      "id": 208,
+      "role": "summary",
+      "content_type": "",
+      "url": null,
+      "created_at": "2017-04-26T11:48:29.069Z",
+      "state": "unprocessed",
+      "voice": {
+        "id": 1,
+        "language": "en_GB",
+        "name": "en-GB_KateVoice"
+      }
+    },
+    {
+      "id": 209,
+      "role": "body",
+      "content_type": "",
+      "url": null,
+      "created_at": "2017-04-26T11:48:29.071Z",
+      "state": "unprocessed",
+      "voice": {
+        "id": 1,
+        "language": "en_GB",
+        "name": "en-GB_KateVoice"
+      }
+    }
+  ]
+}
+```
+
+Create an article for your site. Every time you create an article we build the audio for you.
+
+<aside class="notice">
+  Make sure the <code>state</code> of the article is "processed" to ensure that it has been generated, transcoded, etc.
+</aside>
+
+
+
+### HTTP Request
+
+`POST https://app.speechkit.io/api/v1/news_sites/{news_site_id}/articles`
+
+### Parameters
+
+Parameter | Default | Description
+--------- | ------- | -----------
+external_id | none | The id you want to identify this article as. Needs to be unique
+title | none | The title of the article
+published_at | none | When this article was originally published
+author | none | The name of the author for this article
+summary | none | The summary of the article
+body | none | The complete body of the article
+media_attributes | none | This is an array containing all media files you want produced.
+media_attributes[:role] | none | The role specifies what part of the article you want synthesized
+media_attributes[:voice_id] | none | The voice id you want to use for this synthesis.
+
+
